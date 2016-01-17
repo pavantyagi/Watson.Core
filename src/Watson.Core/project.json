@@ -1,0 +1,33 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "Watson.Core Class Library",
+  "authors": [ "Damien Dennehy" ],
+  "tags": [ "watson watson.core" ],
+  "projectUrl": "http://watsonnet.readthedocs.org/en/latest",
+  "licenseUrl": "",
+  "frameworks": {
+    "net45": {
+      "frameworkAssemblies": {
+        "System.Net.Http": "4.0.0.0"
+      }
+    },
+    "dotnet5.2": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.0",
+        "System.Collections": "4.0.0",
+        "System.Diagnostics.Debug": "4.0.0",
+        "System.Dynamic.Runtime": "4.0.0",
+        "System.Linq": "4.0.0",
+        "System.Net.Http": "4.0.0",
+        "System.Net.Primitives": "4.0.0",
+        "System.Reflection": "4.0.0",
+        "System.Runtime": "4.0.0",
+        "System.Runtime.Extensions": "4.0.0",
+        "System.Threading": "4.0.0"
+      }
+    }
+  },
+  "dependencies": {
+    "Newtonsoft.Json": "8.0.2"
+  }
+}

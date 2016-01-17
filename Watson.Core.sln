@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{662120BB-83D0-41F9-A9D7-55B5E3576650}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8ECEC1FF-E01B-45A0-A052-42221E48846B}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Watson.Core", "src\Watson.Core\Watson.Core.xproj", "{A434B6E7-9533-463F-916A-1F19B7C41648}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{44482438-F3F4-4EE3-8436-4FF7AC0920ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watson.Core.Tests", "test\Watson.Core.Tests\Watson.Core.Tests.csproj", "{F05A4ABC-7305-41EB-9F18-4946223F9CCD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A434B6E7-9533-463F-916A-1F19B7C41648}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A434B6E7-9533-463F-916A-1F19B7C41648}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A434B6E7-9533-463F-916A-1F19B7C41648}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A434B6E7-9533-463F-916A-1F19B7C41648}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F05A4ABC-7305-41EB-9F18-4946223F9CCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F05A4ABC-7305-41EB-9F18-4946223F9CCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F05A4ABC-7305-41EB-9F18-4946223F9CCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F05A4ABC-7305-41EB-9F18-4946223F9CCD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A434B6E7-9533-463F-916A-1F19B7C41648} = {662120BB-83D0-41F9-A9D7-55B5E3576650}
+		{F05A4ABC-7305-41EB-9F18-4946223F9CCD} = {44482438-F3F4-4EE3-8436-4FF7AC0920ED}
+	EndGlobalSection
+EndGlobal
