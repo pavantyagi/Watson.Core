@@ -6,6 +6,10 @@
   "projectUrl": "http://watsonnet.readthedocs.org/en/latest",
   "licenseUrl": "https://github.com/DamienDennehy/Watson.Core/blob/master/LICENSE",
   "iconUrl": "https://raw.githubusercontent.com/DamienDennehy/Watson.Core/master/icon.png",
+  "copyright": "Copyright © 2015-2016",
+  "packInclude": {
+    "readme.txt": "readme.txt"
+  },
   "frameworks": {
     "net45": {
       "frameworkAssemblies": {
