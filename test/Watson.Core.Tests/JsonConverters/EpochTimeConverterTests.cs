@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Watson.Core.JsonConverters;
+
 // ReSharper disable ExceptionNotDocumented
 
 namespace Watson.Core.Tests.JsonConverters

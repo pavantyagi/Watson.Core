@@ -16,86 +16,83 @@ namespace Watson.Core.Tests.ServiceTests
     {
         [TestMethod]
         [ExpectedException(typeof (ArgumentNullException))]
-        public void Username_SetNullByConstructor1_ThrowArgumentNullException()
+        public void Username_SetNullByConstructor_ThrowArgumentNullException()
         {
-            var service = new FakeService(null, "password");
+            var service = new FakeService(null, "password", new HttpClient(), new WatsonSettings());
             Assert.IsNotNull(service);
         }
 
         [TestMethod]
         [ExpectedException(typeof (ArgumentNullException))]
-        public void Password_SetNullByConstructor1_ThrowArgumentNullException()
+        public void Password_SetNullByConstructor_ThrowArgumentNullException()
         {
-            var service = new FakeService("username", null);
-            Assert.IsNotNull(service);
-        }
-
-        [TestMethod]
-        public void HttpClient_SetByConstructor1_IsNotNull()
-        {
-            var service = new FakeService("username", "password");
-            Assert.IsNotNull(service.HttpClient);
-        }
-
-        [TestMethod]
-        public void ApiKey_SetByConstructor1_AreEqual()
-        {
-            var service = new FakeService("ausername", "apassword");
-            Assert.IsNotNull(service.HttpClient);
-            Assert.AreEqual("ausername:apassword", service.ApiKey);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof (ArgumentNullException))]
-        public void Username_SetNullByConstructor2_ThrowArgumentNullException()
-        {
-            var service = new FakeService(null, "password", new HttpClient());
+            var service = new FakeService("username", null, new HttpClient(), new WatsonSettings());
             Assert.IsNotNull(service);
         }
 
         [TestMethod]
         [ExpectedException(typeof (ArgumentNullException))]
-        public void Password_SetNullByConstructor2_ThrowArgumentNullException()
+        public void HttpClient_SetNullByConstructor_ThrowArgumentNullException()
         {
-            var service = new FakeService("username", null, new HttpClient());
+            var service = new FakeService("username", "password", null, new WatsonSettings());
             Assert.IsNotNull(service);
         }
 
         [TestMethod]
         [ExpectedException(typeof (ArgumentNullException))]
-        public void HttpClient_SetNullByConstructor2_ThrowArgumentNullException()
+        public void WatsonSettings_SetNullByConstructor_ThrowArgumentNullException()
         {
-            var service = new FakeService("username", "password", null);
+            var service = new FakeService("username", "password", new HttpClient(), null);
             Assert.IsNotNull(service);
         }
 
         [TestMethod]
-        public void HttpClient_SetByConstructor2_IsNotNull()
+        public void HttpClient_SetByConstructor_IsNotNull()
         {
-            var service = new FakeService("username", "password", new HttpClient());
+            var service = new FakeService("username", "password", new HttpClient(), new WatsonSettings());
             Assert.IsNotNull(service);
             Assert.IsNotNull(service.HttpClient);
         }
 
         [TestMethod]
-        public void HttpClient_SetByConstructor2_AreEqual()
+        public void WatsonSettings_SetByConstructor_IsNotNull()
+        {
+            var service = new FakeService("username", "password", new HttpClient(), new WatsonSettings());
+            Assert.IsNotNull(service);
+            Assert.IsNotNull(service.Settings);
+        }
+
+        [TestMethod]
+        public void WatsonSettings_SetByConstructor_AreEqual()
         {
             var client = new HttpClient {BaseAddress = new Uri("https://www.google.com")};
-            var service = new FakeService("username", "password", client);
+            var settings = new WatsonSettings
+            {
+                LearningOptOut = false
+            };
+            var service = new FakeService("username", "password", client, settings);
+            Assert.AreEqual(settings.LearningOptOut, false);
+        }
+
+        [TestMethod]
+        public void HttpClient_SetByConstructor_AreEqual()
+        {
+            var client = new HttpClient {BaseAddress = new Uri("https://www.google.com")};
+            var service = new FakeService("username", "password", client, new WatsonSettings());
             Assert.AreEqual(client.BaseAddress, service.HttpClient.BaseAddress);
         }
 
         [TestMethod]
-        public void ApiKey_SetByConstructor2_AreEqual()
+        public void ApiKey_SetByConstructor_AreEqual()
         {
-            var service = new FakeService("ausername", "apassword", new HttpClient());
+            var service = new FakeService("ausername", "apassword", new HttpClient(), new WatsonSettings());
             Assert.AreEqual("ausername:apassword", service.ApiKey);
         }
 
         [TestMethod]
         public void HttpClient_SetByConstructor_IsConfigured()
         {
-            var service = new FakeService("ausername", "apassword", new HttpClient());
+            var service = new FakeService("ausername", "apassword", new HttpClient(), new WatsonSettings());
 
             var encoding = Encoding.UTF8;
             var byteArray = encoding.GetBytes(service.ApiKey);
@@ -111,7 +108,7 @@ namespace Watson.Core.Tests.ServiceTests
         [ExpectedException(typeof (ArgumentNullException))]
         public async Task SendHttpRequestMessageAsync_WithNullMessage_ThrowsArgumentNullException()
         {
-            var service = new FakeService("ausername", "apassword");
+            var service = new FakeService("ausername", "apassword", new HttpClient(), new WatsonSettings());
             await service.SendRequestAsync<bool>(null).ConfigureAwait(false);
         }
 
@@ -129,7 +126,8 @@ namespace Watson.Core.Tests.ServiceTests
             //Add a fake response
             fakeHttpMessageHandler.AddFakeResponse("http://example.org/test", fakeResponse);
 
-            var service = new FakeService("ausername", "apassword", new HttpClient(fakeHttpMessageHandler));
+            var service = new FakeService("ausername", "apassword", new HttpClient(fakeHttpMessageHandler),
+                new WatsonSettings());
 
             //Query a url we know doesn't exist in the fake handler
             var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test2");
@@ -138,19 +136,20 @@ namespace Watson.Core.Tests.ServiceTests
             Assert.IsNull(profile);
         }
 
-        //    fakeHttpMessageHandler.AddFakeResponse(new Uri("http://example.org/test"), fakeResponse);
-        //    };
-        //        Content = new StringContent(FakePersonalityInsightsResponses.FakeResponse)
-        //    {
-        //    var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK)
-        //    var fakeHttpMessageHandler = new FakeHttpMessageHandler();
+        //public async Task SendHttpRequestMessageAsync_WithMessage_AreEqual()
+        //{
+        //    var constructorObjects = new object[3];
+        //    constructorObjects[0] = "ausername";
+        //    constructorObjects[1] = "apassword";
 
         //    //Create a fake message handler
-        //    constructorObjects[1] = "apassword";
-        //    constructorObjects[0] = "ausername";
-        //    var constructorObjects = new object[3];
-        //{
-        //public async Task SendHttpRequestMessageAsync_WithMessage_AreEqual()
+        //    var fakeHttpMessageHandler = new FakeHttpMessageHandler();
+        //    var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK)
+        //    {
+        //        Content = new StringContent(FakePersonalityInsightsResponses.FakeResponse)
+        //    };
+
+        //    fakeHttpMessageHandler.AddFakeResponse(new Uri("http://example.org/test"), fakeResponse);
 
         //[TestMethod]
 

@@ -11,7 +11,7 @@ namespace Watson.Core.Tests.JsonConverters
         public void TypeConverter_CanConvertBool_IsTrue()
         {
             var converter = new TypeConverter<bool>();
-            var canConvert = converter.CanConvert(typeof(bool));
+            var canConvert = converter.CanConvert(typeof (bool));
             Assert.IsTrue(canConvert);
         }
 

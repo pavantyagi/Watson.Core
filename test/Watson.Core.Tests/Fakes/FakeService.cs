@@ -7,12 +7,8 @@ namespace Watson.Core.Tests.Fakes
 {
     public class FakeService : WatsonService
     {
-        public FakeService(string username, string password) : base(username, password)
-        {
-        }
-
-        public FakeService(string username, string password, HttpClient httpClient)
-            : base(username, password, httpClient)
+        public FakeService(string username, string password, HttpClient httpClient, WatsonSettings settings)
+            : base(username, password, httpClient, settings)
         {
         }
 

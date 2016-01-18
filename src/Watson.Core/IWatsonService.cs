@@ -21,5 +21,10 @@ namespace Watson.Core
         ///     The class for sending HTTP requests and receiving HTTP responses from the service methods.
         /// </summary>
         HttpClient HttpClient { get; }
+
+        /// <summary>
+        ///     Common settings for all Watson Services.
+        /// </summary>
+        WatsonSettings Settings { get; }
     }
 }

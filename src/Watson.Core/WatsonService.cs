@@ -25,19 +25,10 @@ namespace Watson.Core
         /// </summary>
         /// <param name="username">The service's username.</param>
         /// <param name="password">The service's password.</param>
-        protected WatsonService(string username, string password)
-            : this(username, password, new HttpClient())
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the WatsonService class.
-        /// </summary>
-        /// <param name="username">The service's username.</param>
-        /// <param name="password">The service's password.</param>
         /// <param name="httpClient">The class for sending HTTP requests and receiving HTTP responses from the service methods.</param>
+        /// <param name="settings">Common settings for all Watson Services.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        protected WatsonService(string username, string password, HttpClient httpClient)
+        protected WatsonService(string username, string password, HttpClient httpClient, WatsonSettings settings)
         {
             if (string.IsNullOrWhiteSpace(username))
                 throw new ArgumentNullException(nameof(username));
@@ -48,6 +39,9 @@ namespace Watson.Core
             if (httpClient == null)
                 throw new ArgumentNullException(nameof(httpClient));
 
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
+
             var apiKey = $"{username}:{password}";
             var encoding = Encoding.UTF8;
             var byteArray = encoding.GetBytes(apiKey);
@@ -55,9 +49,12 @@ namespace Watson.Core
             var header = new AuthenticationHeaderValue("Basic", apiKeyBase64);
 
             httpClient.DefaultRequestHeaders.Authorization = header;
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Watson-Learning-Opt-Out",
+                $"{settings.LearningOptOut}".ToLower());
 
             ApiKey = apiKey;
             HttpClient = httpClient;
+            Settings = settings;
         }
 
         /// <summary>
@@ -74,6 +71,11 @@ namespace Watson.Core
         ///     The class for sending HTTP requests and receiving HTTP responses from the service methods.
         /// </summary>
         public virtual HttpClient HttpClient { get; }
+
+        /// <summary>
+        ///     Common settings for all Watson Services.
+        /// </summary>
+        public virtual WatsonSettings Settings { get; }
 
         /// <summary>
         ///     Send requests to the service.
