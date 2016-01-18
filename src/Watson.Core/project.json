@@ -1,10 +1,11 @@
 ﻿{
   "version": "1.0.0-*",
-  "description": "Watson.Core Class Library",
+  "description": "Watson.Core is a .NET implementation of IBM Watson Services.",
   "authors": [ "Damien Dennehy" ],
   "tags": [ "watson watson.core" ],
   "projectUrl": "http://watsonnet.readthedocs.org/en/latest",
-  "licenseUrl": "",
+  "licenseUrl": "https://github.com/DamienDennehy/Watson.Core/blob/master/LICENSE",
+  "iconUrl": "https://raw.githubusercontent.com/DamienDennehy/Watson.Core/master/icon.png",
   "frameworks": {
     "net45": {
       "frameworkAssemblies": {
