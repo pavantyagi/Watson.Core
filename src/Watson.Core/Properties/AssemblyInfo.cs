@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("Watson.Core")]
-[assembly: AssemblyDescription("Watson.Core is a .NET implementation of IBM Watson Services.")]
+[assembly: AssemblyDescription("Watson.Core contains common abstractions and converters used by other Watson packages.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Damien Dennehy")]
 [assembly: AssemblyProduct("Watson.Core")]
