@@ -2,7 +2,7 @@
   "version": "1.0.0-*",
   "description": "Watson.Core contains common abstractions and converters used by other Watson packages.",
   "authors": [ "Damien Dennehy" ],
-  "tags": [ "watson watson.core" ],
+  "tags": [ "ibm watson watson.core" ],
   "projectUrl": "http://watsonnet.readthedocs.org/en/latest",
   "licenseUrl": "https://github.com/DamienDennehy/Watson.Core/blob/master/LICENSE",
   "iconUrl": "https://raw.githubusercontent.com/DamienDennehy/Watson.Core/master/icon.png",
@@ -19,17 +19,14 @@
     "dotnet5.2": {
       "dependencies": {
         "Microsoft.CSharp": "4.0.0",
-        "System.Collections": "4.0.0",
         "System.Diagnostics.Debug": "4.0.0",
         "System.Dynamic.Runtime": "4.0.0",
-        "System.Linq": "4.0.0",
         "System.Net.Http": "4.0.0",
         "System.Net.Primitives": "4.0.0",
         "System.Reflection": "4.0.0",
         "System.Runtime": "4.0.0",
         "System.Runtime.Extensions": "4.0.0",
         "System.Text.Encoding": "4.0.0",
-        "System.Threading": "4.0.0",
         "System.Threading.Tasks": "4.0.0"
       }
     }
