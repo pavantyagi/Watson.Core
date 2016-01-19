@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Watson.Core.Tests.FakeResponses;
 using Watson.Core.Tests.Fakes;
 
 // ReSharper disable ExceptionNotDocumented
@@ -112,8 +113,9 @@ namespace Watson.Core.Tests.ServiceTests
             await service.SendRequestAsync<bool>(null).ConfigureAwait(false);
         }
 
+
         [TestMethod]
-        [ExpectedException(typeof (WatsonException))]
+        [ExpectedException(typeof(WatsonException))]
         public async Task SendHttpRequestMessageAsync_WithInvalidUrl_IsNull()
         {
             //Create a fake message handler
@@ -126,114 +128,59 @@ namespace Watson.Core.Tests.ServiceTests
             //Add a fake response
             fakeHttpMessageHandler.AddFakeResponse("http://example.org/test", fakeResponse);
 
-            var service = new FakeService("ausername", "apassword", new HttpClient(fakeHttpMessageHandler),
-                new WatsonSettings());
+            //Create a HttpClient that will use the fake handler
+            var httpClient = new HttpClient(fakeHttpMessageHandler);
+
+            var service = new FakeService("ausername", "apassword", httpClient, new WatsonSettings());
 
             //Query a url we know doesn't exist in the fake handler
             var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test2");
-            var profile = await service.SendRequestAsync<bool>(message).ConfigureAwait(false);
+            var found = await service.SendRequestAsync<bool>(message).ConfigureAwait(false);
 
-            Assert.IsNull(profile);
+            Assert.IsFalse(found);
         }
 
-        //    fakeHttpMessageHandler.AddFakeResponse(new Uri("http://example.org/test"), fakeResponse);
-        //    };
-        //        Content = new StringContent(FakePersonalityInsightsResponses.FakeResponse)
-        //    {
-        //    var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK)
-        //    var fakeHttpMessageHandler = new FakeHttpMessageHandler();
+        [TestMethod]
+        public async Task SendHttpRequestMessageAsync_ReturnString_AreEqual()
+        {
+            //Create a fake message handler
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler();
+            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("hello world") };
 
-        //    //Create a fake message handler
-        //    constructorObjects[1] = "apassword";
-        //    constructorObjects[0] = "ausername";
-        //    var constructorObjects = new object[3];
-        //{
+            fakeHttpMessageHandler.AddFakeResponse("http://example.org/test", fakeResponse);
 
-        //public async Task SendHttpRequestMessageAsync_WithMessage_AreEqual()
+            //Create a HttpClient that will use the fake handler
+            var httpClient = new HttpClient(fakeHttpMessageHandler);
 
-        //[TestMethod]
+            var service = new FakeService("ausername", "apassword", httpClient, new WatsonSettings());
+            var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test");
+            var result = await service.SendRequestAsync<string>(message).ConfigureAwait(false);
 
-        //    //Create a HttpClient that will use the fake handler
-        //    var httpClient = new HttpClient(fakeHttpMessageHandler);
+            Assert.IsNotNull(result);
+        }
 
-        //    //Inject the fake HttpClient when declaring a new service instance
-        //    constructorObjects[2] = httpClient;
+        [TestMethod]
+        [ExpectedException(typeof(WatsonException))]
+        public async Task SendHttpRequestMessageAsync_With401ErrorMessage_AreEqual()
+        {
+            //Create a fake message handler
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler();
+            var fakeResponse = new HttpResponseMessage(HttpStatusCode.Unauthorized)
+            {
+                Content = new StringContent(FakeErrors.Fake401Error)
+            };
 
-        //    var service = Substitute.ForPartsOf<WatsonService>(constructorObjects);
-        //    var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test");
-        //    var profile = await service.SendHttpRequestMessageAsync<bool>(message);
+            fakeHttpMessageHandler.AddFakeResponse("http://example.org/test", fakeResponse);
 
-        //    Assert.IsNotNull(profile);
-        //}
+            //Create a HttpClient that will use the fake handler
+            var httpClient = new HttpClient(fakeHttpMessageHandler);
 
-        //[TestMethod]
-        //public async Task SendHttpRequestMessageAsync_ReturnString_AreEqual()
-        //{
-        //    var constructorObjects = new object[3];
-        //    constructorObjects[0] = "ausername";
-        //    constructorObjects[1] = "apassword";
+            //Inject the fake HttpClient when declaring a new service instance
+            var service = new FakeService("ausername", "apassword", httpClient, new WatsonSettings());
+            var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test");
+            var profile = await service.SendRequestAsync<bool>(message).ConfigureAwait(false);
 
-        //    //Create a fake message handler
-        //    var fakeHttpMessageHandler = new FakeHttpMessageHandler();
-        //    var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("hello world") };
-
-        //    fakeHttpMessageHandler.AddFakeResponse(new Uri("http://example.org/test"), fakeResponse);
-
-        //    //Create a HttpClient that will use the fake handler
-        //    var httpClient = new HttpClient(fakeHttpMessageHandler);
-
-        //    //Inject the fake HttpClient when declaring a new service instance
-        //    constructorObjects[2] = httpClient;
-
-        //    var service = Substitute.ForPartsOf<WatsonService>(constructorObjects);
-        //    var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test");
-        //    var profile = await service.SendHttpRequestMessageAsync<string>(message);
-
-        //    Assert.IsNotNull(profile);
-        //}
-
-        //[TestMethod]
-        //[ExpectedException(typeof(WatsonException))]
-        //public async Task SendHttpRequestMessageAsync_With401ErrorMessage_AreEqual()
-        //{
-        //    var constructorObjects = new object[3];
-        //    constructorObjects[0] = "ausername";
-        //    constructorObjects[1] = "apassword";
-
-        //    //Create a fake message handler
-        //    var fakeHttpMessageHandler = new FakeHttpMessageHandler();
-        //    var fakeResponse = new HttpResponseMessage(HttpStatusCode.Unauthorized)
-        //    {
-        //        Content = new StringContent(FakeErrors.Fake401Error)
-        //    };
-
-        //    fakeHttpMessageHandler.AddFakeResponse(new Uri("http://example.org/test"), fakeResponse);
-
-        //    //Create a HttpClient that will use the fake handler
-        //    var httpClient = new HttpClient(fakeHttpMessageHandler);
-
-        //    //Inject the fake HttpClient when declaring a new service instance
-        //    constructorObjects[2] = httpClient;
-
-        //    var service = Substitute.ForPartsOf<WatsonService>(constructorObjects);
-        //    var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test");
-        //    var profile = await service.SendHttpRequestMessageAsync<bool>(message);
-
-        //    Assert.IsNotNull(profile);
-        //}
-
-        //[TestMethod]
-        //public void ParseError_ReturnString_AreEqual()
-        //{
-        //    dynamic errorObject = JObject.Parse(FakeErrors.Fake400Error);
-
-        //    string error = errorObject.error.ToString();
-        //    string code = errorObject.code.ToString();
-
-        //    Assert.AreEqual(
-        //        "The number of words 5 is less than the minimum number of words required for analysis: 100", error);
-
-        //    Assert.AreEqual("400", code);
-        //}
+            Assert.IsNotNull(profile);
+        }
     }
 }
