@@ -13,11 +13,6 @@ namespace Watson.Core
         string ApiKey { get; }
 
         /// <summary>
-        ///     The Service's Url.
-        /// </summary>
-        string ServiceUrl { get; }
-
-        /// <summary>
         ///     The class for sending HTTP requests and receiving HTTP responses from the service methods.
         /// </summary>
         HttpClient HttpClient { get; }

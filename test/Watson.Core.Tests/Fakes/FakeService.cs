@@ -12,8 +12,6 @@ namespace Watson.Core.Tests.Fakes
         {
         }
 
-        public override string ServiceUrl { get; } = "https://gateway.watsonplatform.net/";
-
         public new async Task<T> SendRequestAsync<T>(HttpRequestMessage message)
         {
             return await base.SendRequestAsync<T>(message).ConfigureAwait(false);

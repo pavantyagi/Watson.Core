@@ -63,11 +63,6 @@ namespace Watson.Core
         public virtual string ApiKey { get; }
 
         /// <summary>
-        ///     The Service's Url.
-        /// </summary>
-        public abstract string ServiceUrl { get; }
-
-        /// <summary>
         ///     The class for sending HTTP requests and receiving HTTP responses from the service methods.
         /// </summary>
         public virtual HttpClient HttpClient { get; }
