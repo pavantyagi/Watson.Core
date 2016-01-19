@@ -71,7 +71,7 @@ namespace Watson.Core.Tests.ServiceTests
                 LearningOptOut = false
             };
             var service = new FakeService("username", "password", client, settings);
-            Assert.AreEqual(settings.LearningOptOut, false);
+            Assert.AreEqual(service.Settings.LearningOptOut, false);
         }
 
         [TestMethod]
@@ -136,20 +136,20 @@ namespace Watson.Core.Tests.ServiceTests
             Assert.IsNull(profile);
         }
 
-        //public async Task SendHttpRequestMessageAsync_WithMessage_AreEqual()
-        //{
-        //    var constructorObjects = new object[3];
-        //    constructorObjects[0] = "ausername";
-        //    constructorObjects[1] = "apassword";
+        //    fakeHttpMessageHandler.AddFakeResponse(new Uri("http://example.org/test"), fakeResponse);
+        //    };
+        //        Content = new StringContent(FakePersonalityInsightsResponses.FakeResponse)
+        //    {
+        //    var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK)
+        //    var fakeHttpMessageHandler = new FakeHttpMessageHandler();
 
         //    //Create a fake message handler
-        //    var fakeHttpMessageHandler = new FakeHttpMessageHandler();
-        //    var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK)
-        //    {
-        //        Content = new StringContent(FakePersonalityInsightsResponses.FakeResponse)
-        //    };
+        //    constructorObjects[1] = "apassword";
+        //    constructorObjects[0] = "ausername";
+        //    var constructorObjects = new object[3];
+        //{
 
-        //    fakeHttpMessageHandler.AddFakeResponse(new Uri("http://example.org/test"), fakeResponse);
+        //public async Task SendHttpRequestMessageAsync_WithMessage_AreEqual()
 
         //[TestMethod]
 

@@ -82,8 +82,10 @@ namespace Watson.Core
         /// </summary>
         /// <param name="message">The HttpRequestMessage that should be sent.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <returns></returns>
         /// <exception cref="WatsonException"></exception>
+        /// <exception cref="InvalidCastException"></exception>
+        /// <exception cref="OverflowException"></exception>
+        /// <returns></returns>
         protected virtual async Task<T> SendRequestAsync<T>(HttpRequestMessage message)
         {
             if (message == null)
