@@ -14,7 +14,7 @@ namespace Watson.Core.Tests.Fakes
         public async Task HttpClient_GetAsync_ResponseContent_IsNull()
         {
             var fakeUrl = "http://example.org/exists";
-            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("hello world")};
+            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("hello world") };
 
             var httpClient = new HttpClient(new FakeHttpMessageHandler(fakeUrl, fakeResponse));
             var httpResponse = await httpClient.GetAsync("http://example.org/notfound").ConfigureAwait(false);
@@ -26,7 +26,7 @@ namespace Watson.Core.Tests.Fakes
         public async Task HttpClient_GetAsync_ResponseContentAreEqual()
         {
             var fakeUrl = "http://example.org/test";
-            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("get response")};
+            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("get response") };
 
             var httpClient = new HttpClient(new FakeHttpMessageHandler(fakeUrl, fakeResponse));
             var httpResponse = await httpClient.GetAsync("http://example.org/test").ConfigureAwait(false);
@@ -39,10 +39,10 @@ namespace Watson.Core.Tests.Fakes
         public async Task HttpClient_PostAsync_ResponseContentAreEqual()
         {
             var fakeUrl = "http://example.org/test";
-            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("post response")};
+            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("post response") };
 
             var httpClient = new HttpClient(new FakeHttpMessageHandler(fakeUrl, fakeResponse));
-            var parameters = new Dictionary<string, string> {{"Name", "bob"}};
+            var parameters = new Dictionary<string, string> { { "Name", "bob" } };
 
             var content = new FormUrlEncodedContent(parameters.ToArray());
 

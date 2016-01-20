@@ -73,13 +73,11 @@ namespace Watson.Core
         public virtual WatsonSettings Settings { get; }
 
         /// <summary>
-        ///     Send requests to the service.
+        ///     Send requests to the service and return a T response.
         /// </summary>
         /// <param name="message">The HttpRequestMessage that should be sent.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="WatsonException"></exception>
-        /// <exception cref="InvalidCastException"></exception>
-        /// <exception cref="OverflowException"></exception>
         /// <returns></returns>
         protected virtual async Task<T> SendRequestAsync<T>(HttpRequestMessage message)
         {
@@ -100,7 +98,7 @@ namespace Watson.Core
             {
                 //If the error can't be parsed, just return the reason phrase
                 if (!stringResponse.StartsWith("{\"help"))
-                    throw new WatsonException($"{(int) httpResponse.StatusCode} {httpResponse.ReasonPhrase}");
+                    throw new WatsonException($"{(int)httpResponse.StatusCode} {httpResponse.ReasonPhrase}");
 
                 //Parse the error
                 dynamic errorObject = JObject.Parse(stringResponse);
@@ -111,12 +109,44 @@ namespace Watson.Core
             if (string.IsNullOrWhiteSpace(stringResponse))
                 return default(T);
 
-            //Certain services return text data (CSV etc)
-            //So the return type should be string
-            if (typeof (T) == typeof (string))
-                return (T) Convert.ChangeType(stringResponse, typeof (string));
-
             return JsonConvert.DeserializeObject<T>(stringResponse);
+        }
+
+        /// <summary>
+        ///     Send requests to the service and return a raw string.
+        /// </summary>
+        /// <param name="message">The HttpRequestMessage that should be sent.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="WatsonException"></exception>
+        /// <returns></returns>
+        protected virtual async Task<string> SendRequestWithRawResponseAsync(HttpRequestMessage message)
+        {
+            if (message == null)
+                throw new ArgumentNullException(nameof(message));
+
+            var httpResponse = await HttpClient.SendAsync(message).ConfigureAwait(false);
+
+            string stringResponse = null;
+
+            if (httpResponse.Content != null)
+                stringResponse = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            stringResponse = stringResponse ?? string.Empty;
+
+            //If not a 200 response
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                //If the error can't be parsed, just return the reason phrase
+                if (!stringResponse.StartsWith("{\"help"))
+                    throw new WatsonException($"{(int)httpResponse.StatusCode} {httpResponse.ReasonPhrase}");
+
+                //Parse the error
+                dynamic errorObject = JObject.Parse(stringResponse);
+                string error = errorObject.error.ToString();
+                throw new WatsonException(error);
+            }
+
+            return stringResponse;
         }
     }
 }

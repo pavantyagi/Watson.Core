@@ -17,7 +17,7 @@ namespace Watson.Core.Tests.JsonConverters
         {
             var converter = new EpochTimeConverter();
 
-            Assert.IsTrue(converter.CanConvert(typeof (DateTimeOffset)));
+            Assert.IsTrue(converter.CanConvert(typeof(DateTimeOffset)));
         }
 
         [TestMethod]
@@ -25,7 +25,7 @@ namespace Watson.Core.Tests.JsonConverters
         {
             var converter = new EpochTimeConverter();
 
-            Assert.IsFalse(converter.CanConvert(typeof (string)));
+            Assert.IsFalse(converter.CanConvert(typeof(string)));
         }
 
         [TestMethod]
@@ -33,7 +33,7 @@ namespace Watson.Core.Tests.JsonConverters
         {
             var converter = new EpochTimeConverter();
 
-            Assert.IsFalse(converter.CanConvert(typeof (int)));
+            Assert.IsFalse(converter.CanConvert(typeof(int)));
         }
 
         [TestMethod]
@@ -46,7 +46,7 @@ namespace Watson.Core.Tests.JsonConverters
             var serializer = new JsonSerializer();
 
             var expected = new DateTimeOffset(new DateTime(2015, 8, 9, 15, 30, 35, DateTimeKind.Utc));
-            var actual = (DateTimeOffset) converter.ReadJson(reader, typeof (DateTimeOffset), null, serializer);
+            var actual = (DateTimeOffset)converter.ReadJson(reader, typeof(DateTimeOffset), null, serializer);
 
             Assert.AreEqual(expected, actual);
         }
@@ -61,13 +61,13 @@ namespace Watson.Core.Tests.JsonConverters
             var serializer = new JsonSerializer();
 
             var expected = new DateTimeOffset(new DateTime(2005, 8, 9, 15, 30, 35, DateTimeKind.Utc));
-            var actual = (DateTimeOffset) converter.ReadJson(reader, typeof (DateTimeOffset), null, serializer);
+            var actual = (DateTimeOffset)converter.ReadJson(reader, typeof(DateTimeOffset), null, serializer);
 
             Assert.AreNotEqual(expected, actual);
         }
 
         [TestMethod]
-        [ExpectedException(typeof (InvalidCastException))]
+        [ExpectedException(typeof(InvalidCastException))]
         public void EpochTimeConverter_ReadJsonString_ThrowsInvalidCastException()
         {
             var converter = new EpochTimeConverter();
@@ -77,13 +77,13 @@ namespace Watson.Core.Tests.JsonConverters
             var serializer = new JsonSerializer();
 
             var expected = new DateTimeOffset(new DateTime(2015, 8, 9, 15, 30, 35, DateTimeKind.Utc));
-            var actual = (DateTimeOffset) converter.ReadJson(reader, typeof (DateTimeOffset), null, serializer);
+            var actual = (DateTimeOffset)converter.ReadJson(reader, typeof(DateTimeOffset), null, serializer);
 
             Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]
-        [ExpectedException(typeof (InvalidCastException))]
+        [ExpectedException(typeof(InvalidCastException))]
         public void EpochTimeConverter_ReadJsonBoolean_ThrowsInvalidCastException()
         {
             var converter = new EpochTimeConverter();
@@ -93,7 +93,7 @@ namespace Watson.Core.Tests.JsonConverters
             var serializer = new JsonSerializer();
 
             var expected = new DateTimeOffset(new DateTime(2015, 8, 9, 15, 30, 35, DateTimeKind.Utc));
-            var actual = (DateTimeOffset) converter.ReadJson(reader, typeof (DateTimeOffset), null, serializer);
+            var actual = (DateTimeOffset)converter.ReadJson(reader, typeof(DateTimeOffset), null, serializer);
 
             Assert.AreEqual(expected, actual);
         }
@@ -135,7 +135,7 @@ namespace Watson.Core.Tests.JsonConverters
         }
 
         [TestMethod]
-        [ExpectedException(typeof (InvalidCastException))]
+        [ExpectedException(typeof(InvalidCastException))]
         public void EpochTimeConverter_WriteJsonString_ThrowsInvalidCastException()
         {
             var converter = new EpochTimeConverter();
@@ -153,7 +153,7 @@ namespace Watson.Core.Tests.JsonConverters
         }
 
         [TestMethod]
-        [ExpectedException(typeof (InvalidCastException))]
+        [ExpectedException(typeof(InvalidCastException))]
         public void EpochTimeConverter_WriteJsonBoolean_ThrowsInvalidCastException()
         {
             var converter = new EpochTimeConverter();

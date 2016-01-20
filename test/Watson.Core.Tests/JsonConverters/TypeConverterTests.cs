@@ -11,7 +11,7 @@ namespace Watson.Core.Tests.JsonConverters
         public void TypeConverter_CanConvertBool_IsTrue()
         {
             var converter = new TypeConverter<bool>();
-            var canConvert = converter.CanConvert(typeof (bool));
+            var canConvert = converter.CanConvert(typeof(bool));
             Assert.IsTrue(canConvert);
         }
 
@@ -19,7 +19,7 @@ namespace Watson.Core.Tests.JsonConverters
         public void TypeConverter_CanConvertBoolList_IsTrue()
         {
             var converter = new TypeConverter<IEnumerable<bool>>();
-            var list = new List<bool> {false, true};
+            var list = new List<bool> { false, true };
             var canConvert = converter.CanConvert(list.GetType());
             Assert.IsTrue(canConvert);
         }
@@ -30,14 +30,14 @@ namespace Watson.Core.Tests.JsonConverters
         {
             var converter = new TypeConverter<int>();
 
-            Assert.IsFalse(converter.CanConvert(typeof (string)));
+            Assert.IsFalse(converter.CanConvert(typeof(string)));
         }
 
         [TestMethod]
         public void TypeConverter_CanConvertInt_IsFalse()
         {
             var converter = new TypeConverter<bool>();
-            var list = new List<int> {1, 2, 3};
+            var list = new List<int> { 1, 2, 3 };
             Assert.IsFalse(converter.CanConvert(list.GetType()));
         }
     }

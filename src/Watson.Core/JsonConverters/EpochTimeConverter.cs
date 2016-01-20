@@ -15,7 +15,7 @@ namespace Watson.Core.JsonConverters
         /// <returns></returns>
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof (DateTimeOffset);
+            return objectType == typeof(DateTimeOffset);
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Watson.Core.JsonConverters
             if (reader.TokenType != JsonToken.Integer)
                 throw new InvalidCastException("TokenType must be of type Integer.");
 
-            var time = (long) reader.Value;
+            var time = (long)reader.Value;
 
             var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(time);
             return new DateTimeOffset(date);
@@ -47,13 +47,13 @@ namespace Watson.Core.JsonConverters
         /// <param name="serializer"></param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var dateTimeOffset = (DateTimeOffset) value;
+            var dateTimeOffset = (DateTimeOffset)value;
 
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             var timeSpan = dateTimeOffset - epoch;
 
-            var time = (long) timeSpan.TotalSeconds;
+            var time = (long)timeSpan.TotalSeconds;
 
             serializer.Serialize(writer, time);
         }

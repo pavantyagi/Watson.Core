@@ -37,7 +37,7 @@ namespace Watson.Core.Tests.Fakes
 
             return
                 await
-                    Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound) {RequestMessage = request})
+                    Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound) { RequestMessage = request })
                         .ConfigureAwait(false);
         }
     }

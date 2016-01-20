@@ -16,7 +16,7 @@ namespace Watson.Core.Tests.ServiceTests
     public class WatsonServiceTests
     {
         [TestMethod]
-        [ExpectedException(typeof (ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void Username_SetNullByConstructor_ThrowArgumentNullException()
         {
             var service = new FakeService(null, "password", new HttpClient(), new WatsonSettings());
@@ -24,7 +24,7 @@ namespace Watson.Core.Tests.ServiceTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof (ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void Password_SetNullByConstructor_ThrowArgumentNullException()
         {
             var service = new FakeService("username", null, new HttpClient(), new WatsonSettings());
@@ -32,7 +32,7 @@ namespace Watson.Core.Tests.ServiceTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof (ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void HttpClient_SetNullByConstructor_ThrowArgumentNullException()
         {
             var service = new FakeService("username", "password", null, new WatsonSettings());
@@ -40,7 +40,7 @@ namespace Watson.Core.Tests.ServiceTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof (ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void WatsonSettings_SetNullByConstructor_ThrowArgumentNullException()
         {
             var service = new FakeService("username", "password", new HttpClient(), null);
@@ -66,7 +66,7 @@ namespace Watson.Core.Tests.ServiceTests
         [TestMethod]
         public void WatsonSettings_SetByConstructor_AreEqual()
         {
-            var client = new HttpClient {BaseAddress = new Uri("https://www.google.com")};
+            var client = new HttpClient { BaseAddress = new Uri("https://www.google.com") };
             var settings = new WatsonSettings
             {
                 LearningOptOut = false
@@ -78,7 +78,7 @@ namespace Watson.Core.Tests.ServiceTests
         [TestMethod]
         public void HttpClient_SetByConstructor_AreEqual()
         {
-            var client = new HttpClient {BaseAddress = new Uri("https://www.google.com")};
+            var client = new HttpClient { BaseAddress = new Uri("https://www.google.com") };
             var service = new FakeService("username", "password", client, new WatsonSettings());
             Assert.AreEqual(client.BaseAddress, service.HttpClient.BaseAddress);
         }
@@ -106,17 +106,16 @@ namespace Watson.Core.Tests.ServiceTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof (ArgumentNullException))]
-        public async Task SendHttpRequestMessageAsync_WithNullMessage_ThrowsArgumentNullException()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task SendRequestAsync_WithNullMessage_ThrowsArgumentNullException()
         {
             var service = new FakeService("ausername", "apassword", new HttpClient(), new WatsonSettings());
             await service.SendRequestAsync<bool>(null).ConfigureAwait(false);
         }
-
-
+        
         [TestMethod]
         [ExpectedException(typeof(WatsonException))]
-        public async Task SendHttpRequestMessageAsync_WithInvalidUrl_IsNull()
+        public async Task SendRequestAsync_WithInvalidUrl_IsNull()
         {
             //Create a fake message handler
             var fakeHttpMessageHandler = new FakeHttpMessageHandler();
@@ -141,27 +140,8 @@ namespace Watson.Core.Tests.ServiceTests
         }
 
         [TestMethod]
-        public async Task SendHttpRequestMessageAsync_ReturnString_AreEqual()
-        {
-            //Create a fake message handler
-            var fakeHttpMessageHandler = new FakeHttpMessageHandler();
-            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("hello world") };
-
-            fakeHttpMessageHandler.AddFakeResponse("http://example.org/test", fakeResponse);
-
-            //Create a HttpClient that will use the fake handler
-            var httpClient = new HttpClient(fakeHttpMessageHandler);
-
-            var service = new FakeService("ausername", "apassword", httpClient, new WatsonSettings());
-            var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test");
-            var result = await service.SendRequestAsync<string>(message).ConfigureAwait(false);
-
-            Assert.IsNotNull(result);
-        }
-
-        [TestMethod]
         [ExpectedException(typeof(WatsonException))]
-        public async Task SendHttpRequestMessageAsync_With401ErrorMessage_AreEqual()
+        public async Task SendRequestAsync_With401ErrorMessage_AreEqual()
         {
             //Create a fake message handler
             var fakeHttpMessageHandler = new FakeHttpMessageHandler();
@@ -179,6 +159,83 @@ namespace Watson.Core.Tests.ServiceTests
             var service = new FakeService("ausername", "apassword", httpClient, new WatsonSettings());
             var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test");
             var profile = await service.SendRequestAsync<bool>(message).ConfigureAwait(false);
+
+            Assert.IsNotNull(profile);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task SendRequestWithRawResponseAsync_WithNullMessage_ThrowsArgumentNullException()
+        {
+            var service = new FakeService("ausername", "apassword", new HttpClient(), new WatsonSettings());
+            await service.SendRequestWithRawResponseAsync(null).ConfigureAwait(false);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(WatsonException))]
+        public async Task SendRequestWithRawResponseAsync_WithInvalidUrl_IsNull()
+        {
+            //Create a fake message handler
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler();
+            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("hello world")
+            };
+
+            //Add a fake response
+            fakeHttpMessageHandler.AddFakeResponse("http://example.org/test", fakeResponse);
+
+            //Create a HttpClient that will use the fake handler
+            var httpClient = new HttpClient(fakeHttpMessageHandler);
+
+            var service = new FakeService("ausername", "apassword", httpClient, new WatsonSettings());
+
+            //Query a url we know doesn't exist in the fake handler
+            var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test2");
+            var found = await service.SendRequestWithRawResponseAsync(message).ConfigureAwait(false);
+
+            Assert.AreEqual("true", found);
+        }
+
+        [TestMethod]
+        public async Task SendRequestWithRawResponseAsync_ReturnString_AreEqual()
+        {
+            //Create a fake message handler
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler();
+            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("hello world") };
+
+            fakeHttpMessageHandler.AddFakeResponse("http://example.org/test", fakeResponse);
+
+            //Create a HttpClient that will use the fake handler
+            var httpClient = new HttpClient(fakeHttpMessageHandler);
+
+            var service = new FakeService("ausername", "apassword", httpClient, new WatsonSettings());
+            var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test");
+            var result = await service.SendRequestWithRawResponseAsync(message).ConfigureAwait(false);
+
+            Assert.AreEqual("hello world", result);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(WatsonException))]
+        public async Task SendRequestWithRawResponseAsync_With401ErrorMessage_AreEqual()
+        {
+            //Create a fake message handler
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler();
+            var fakeResponse = new HttpResponseMessage(HttpStatusCode.Unauthorized)
+            {
+                Content = new StringContent(FakeErrors.Fake401Error)
+            };
+
+            fakeHttpMessageHandler.AddFakeResponse("http://example.org/test", fakeResponse);
+
+            //Create a HttpClient that will use the fake handler
+            var httpClient = new HttpClient(fakeHttpMessageHandler);
+
+            //Inject the fake HttpClient when declaring a new service instance
+            var service = new FakeService("ausername", "apassword", httpClient, new WatsonSettings());
+            var message = new HttpRequestMessage(HttpMethod.Get, "http://example.org/test");
+            var profile = await service.SendRequestWithRawResponseAsync(message).ConfigureAwait(false);
 
             Assert.IsNotNull(profile);
         }

@@ -16,5 +16,10 @@ namespace Watson.Core.Tests.Fakes
         {
             return await base.SendRequestAsync<T>(message).ConfigureAwait(false);
         }
+
+        public new async Task<string> SendRequestWithRawResponseAsync(HttpRequestMessage message)
+        {
+            return await base.SendRequestWithRawResponseAsync(message).ConfigureAwait(false);
+        }
     }
 }
