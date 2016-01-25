@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 
 // ReSharper disable ExceptionNotDocumented
 
-namespace Watson.Core.Tests.Fakes
+namespace Watson.Core.Tests.Mocks
 {
-    public class FakeWatsonService : WatsonService
+    public class MockWatsonService : WatsonService
     {
-        public FakeWatsonService(string username, string password, HttpClient httpClient, WatsonSettings settings)
+        public MockWatsonService(string username, string password, HttpClient httpClient, WatsonSettings settings)
             : base(username, password, httpClient, settings)
         {
         }

@@ -4,13 +4,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Watson.Core.Tests.FakeResponses;
-using Watson.Core.Tests.Fakes;
+using Watson.Core.Tests.Mocks;
 using Xunit;
 
 // ReSharper disable ExceptionNotDocumented
 
-namespace Watson.Core.Tests.ServiceTests
+namespace Watson.Core.Tests
 {
     public class WatsonServiceTests
     {
@@ -18,7 +17,7 @@ namespace Watson.Core.Tests.ServiceTests
         public void Username_SetNullByConstructor_ThrowArgumentNullException()
         {
             var exception =
-                Record.Exception(() => new FakeWatsonService(null, "password", new HttpClient(), new WatsonSettings()));
+                Record.Exception(() => new MockWatsonService(null, "password", new HttpClient(), new WatsonSettings()));
 
             Assert.NotNull(exception);
             Assert.IsType<ArgumentNullException>(exception);
@@ -28,7 +27,7 @@ namespace Watson.Core.Tests.ServiceTests
         public void Password_SetNullByConstructor_ThrowArgumentNullException()
         {
             var exception =
-                Record.Exception(() => new FakeWatsonService("username", null, new HttpClient(), new WatsonSettings()));
+                Record.Exception(() => new MockWatsonService("username", null, new HttpClient(), new WatsonSettings()));
             Assert.NotNull(exception);
             Assert.IsType<ArgumentNullException>(exception);
         }
@@ -37,7 +36,7 @@ namespace Watson.Core.Tests.ServiceTests
         public void HttpClient_SetNullByConstructor_ThrowArgumentNullException()
         {
             var exception =
-                Record.Exception(() => new FakeWatsonService("username", "password", null, new WatsonSettings()));
+                Record.Exception(() => new MockWatsonService("username", "password", null, new WatsonSettings()));
             Assert.NotNull(exception);
             Assert.IsType<ArgumentNullException>(exception);
         }
@@ -45,7 +44,7 @@ namespace Watson.Core.Tests.ServiceTests
         [Fact]
         public void WatsonSettings_SetNullByConstructor_ThrowArgumentNullException()
         {
-            var exception = Record.Exception(() => new FakeWatsonService("username", "password", new HttpClient(), null));
+            var exception = Record.Exception(() => new MockWatsonService("username", "password", new HttpClient(), null));
             Assert.NotNull(exception);
             Assert.IsType<ArgumentNullException>(exception);
         }
@@ -53,7 +52,7 @@ namespace Watson.Core.Tests.ServiceTests
         [Fact]
         public void HttpClient_SetByConstructor_NotNull()
         {
-            var service = new FakeWatsonService("username", "password", new HttpClient(), new WatsonSettings());
+            var service = new MockWatsonService("username", "password", new HttpClient(), new WatsonSettings());
             Assert.NotNull(service);
             Assert.NotNull(service.HttpClient);
         }
@@ -61,7 +60,7 @@ namespace Watson.Core.Tests.ServiceTests
         [Fact]
         public void WatsonSettings_SetByConstructor_NotNull()
         {
-            var service = new FakeWatsonService("username", "password", new HttpClient(), new WatsonSettings());
+            var service = new MockWatsonService("username", "password", new HttpClient(), new WatsonSettings());
             Assert.NotNull(service);
             Assert.NotNull(service.Settings);
         }
@@ -74,14 +73,14 @@ namespace Watson.Core.Tests.ServiceTests
             {
                 LearningOptOut = false
             };
-            var service = new FakeWatsonService("username", "password", client, settings);
+            var service = new MockWatsonService("username", "password", client, settings);
             Assert.Equal(service.Settings.LearningOptOut, false);
 
             settings = new WatsonSettings
             {
                 LearningOptOut = true
             };
-            service = new FakeWatsonService("username", "password", client, settings);
+            service = new MockWatsonService("username", "password", client, settings);
             Assert.Equal(service.Settings.LearningOptOut, true);
         }
 
@@ -89,21 +88,21 @@ namespace Watson.Core.Tests.ServiceTests
         public void HttpClient_SetByConstructor_Equal()
         {
             var client = new HttpClient {BaseAddress = new Uri("https://www.google.com")};
-            var service = new FakeWatsonService("username", "password", client, new WatsonSettings());
+            var service = new MockWatsonService("username", "password", client, new WatsonSettings());
             Assert.Equal(client.BaseAddress, service.HttpClient.BaseAddress);
         }
 
         [Fact]
         public void ApiKey_SetByConstructor_Equal()
         {
-            var service = new FakeWatsonService("ausername", "apassword", new HttpClient(), new WatsonSettings());
+            var service = new MockWatsonService("ausername", "apassword", new HttpClient(), new WatsonSettings());
             Assert.Equal("ausername:apassword", service.ApiKey);
         }
 
         [Fact]
         public void HttpClient_SetByConstructor_IsConfigured()
         {
-            var service = new FakeWatsonService("ausername", "apassword", new HttpClient(), new WatsonSettings());
+            var service = new MockWatsonService("ausername", "apassword", new HttpClient(), new WatsonSettings());
 
             var encoding = Encoding.UTF8;
             var byteArray = encoding.GetBytes(service.ApiKey);
@@ -118,7 +117,7 @@ namespace Watson.Core.Tests.ServiceTests
         [Fact]
         public async Task SendRequestAsync_WithNullMessage_ThrowsArgumentNullException()
         {
-            var service = new FakeWatsonService("ausername", "apassword", new HttpClient(), new WatsonSettings());
+            var service = new MockWatsonService("ausername", "apassword", new HttpClient(), new WatsonSettings());
 
             var exception =
                 await
@@ -129,17 +128,20 @@ namespace Watson.Core.Tests.ServiceTests
         }
 
         [Theory]
-        [InlineData("http://example.org/test", "http://example.org/test", "true")]
-        public async Task SendRequestAsyncBool(string requestUrl, string contentUrl, string contentAtUrl)
+        [InlineData("http://example.org/url", "true")]
+        public async Task SendRequestAsyncBool(string requestUrl, string responseContent)
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, contentUrl);
-            var responseMessage = new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent(contentAtUrl)};
-            var httpClient = new HttpClient(new FakeHttpMessageHandler(contentUrl, responseMessage));
-            var service = new FakeWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(responseContent)
+            };
+            var httpClient = new HttpClient(new MockHttpMessageHandler(requestUrl, responseMessage));
+            var service = new MockWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
 
             var response = await service.SendRequestAsync<bool>(requestMessage).ConfigureAwait(false);
 
-            Assert.Equal(response, Convert.ToBoolean(contentAtUrl));
+            Assert.Equal(response, Convert.ToBoolean(responseContent));
         }
 
         [Fact]
@@ -147,8 +149,8 @@ namespace Watson.Core.Tests.ServiceTests
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://example.org/request");
             var responseMessage = new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("true")};
-            var httpClient = new HttpClient(new FakeHttpMessageHandler("http://example.org/404", responseMessage));
-            var service = new FakeWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
+            var httpClient = new HttpClient(new MockHttpMessageHandler("http://example.org/404", responseMessage));
+            var service = new MockWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
 
             var exception =
                 await
@@ -165,10 +167,10 @@ namespace Watson.Core.Tests.ServiceTests
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://example.org/request");
             var responseMessage = new HttpResponseMessage(HttpStatusCode.Unauthorized)
             {
-                Content = new StringContent(FakeErrors.Fake401Error)
+                Content = new StringContent(MockErrors.Error401)
             };
-            var httpClient = new HttpClient(new FakeHttpMessageHandler("http://example.org/request", responseMessage));
-            var service = new FakeWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
+            var httpClient = new HttpClient(new MockHttpMessageHandler("http://example.org/request", responseMessage));
+            var service = new MockWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
 
             var exception =
                 await
@@ -182,7 +184,7 @@ namespace Watson.Core.Tests.ServiceTests
         [Fact]
         public async Task SendRequestWithRawResponseAsync_WithNullMessage_ThrowsArgumentNullException()
         {
-            var service = new FakeWatsonService("ausername", "apassword", new HttpClient(), new WatsonSettings());
+            var service = new MockWatsonService("ausername", "apassword", new HttpClient(), new WatsonSettings());
 
             var exception =
                 await
@@ -194,17 +196,20 @@ namespace Watson.Core.Tests.ServiceTests
         }
 
         [Theory]
-        [InlineData("http://example.org/test", "http://example.org/test", "Hello World")]
-        public async Task SendRequestWithRawResponseAsync(string requestUrl, string contentUrl, string contentAtUrl)
+        [InlineData("http://example.org/url", "Hello World")]
+        public async Task SendRequestWithRawResponseAsync(string requestUrl, string responseContent)
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, contentUrl);
-            var responseMessage = new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent(contentAtUrl)};
-            var httpClient = new HttpClient(new FakeHttpMessageHandler(contentUrl, responseMessage));
-            var service = new FakeWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(responseContent)
+            };
+            var httpClient = new HttpClient(new MockHttpMessageHandler(requestUrl, responseMessage));
+            var service = new MockWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
 
             var stringResponse = await service.SendRequestWithRawResponseAsync(requestMessage).ConfigureAwait(false);
 
-            Assert.Equal(stringResponse, contentAtUrl);
+            Assert.Equal(stringResponse, responseContent);
         }
 
         [Fact]
@@ -213,10 +218,10 @@ namespace Watson.Core.Tests.ServiceTests
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://example.org/request");
             var responseMessage = new HttpResponseMessage(HttpStatusCode.Unauthorized)
             {
-                Content = new StringContent(FakeErrors.Fake401Error)
+                Content = new StringContent(MockErrors.Error401)
             };
-            var httpClient = new HttpClient(new FakeHttpMessageHandler("http://example.org/request", responseMessage));
-            var service = new FakeWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
+            var httpClient = new HttpClient(new MockHttpMessageHandler("http://example.org/request", responseMessage));
+            var service = new MockWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
 
             var exception =
                 await

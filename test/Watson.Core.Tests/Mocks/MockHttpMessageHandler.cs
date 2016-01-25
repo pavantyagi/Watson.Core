@@ -4,36 +4,36 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Watson.Core.Tests.Fakes
+namespace Watson.Core.Tests.Mocks
 {
     /// <summary>
-    ///     Fake HttpMessageHandler for Unit Testing HttpClient.
+    ///     Mock HttpMessageHandler for Unit Testing HttpClient.
     /// </summary>
-    public class FakeHttpMessageHandler : HttpMessageHandler
+    public class MockHttpMessageHandler : HttpMessageHandler
     {
-        private readonly Dictionary<string, HttpResponseMessage> _fakeResponses =
+        private readonly Dictionary<string, HttpResponseMessage> _responseMessages =
             new Dictionary<string, HttpResponseMessage>();
 
-        public FakeHttpMessageHandler()
+        public MockHttpMessageHandler()
         {
         }
 
-        public FakeHttpMessageHandler(string url, HttpResponseMessage response)
+        public MockHttpMessageHandler(string url, HttpResponseMessage response)
         {
-            _fakeResponses.Add(url, response);
+            _responseMessages.Add(url, response);
         }
 
-        public void AddFakeResponse(string url, HttpResponseMessage response)
+        public void AddresponseMessage(string url, HttpResponseMessage response)
         {
-            _fakeResponses.Add(url, response);
+            _responseMessages.Add(url, response);
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
             var key = request.RequestUri.ToString();
-            if (_fakeResponses.ContainsKey(key))
-                return _fakeResponses[key];
+            if (_responseMessages.ContainsKey(key))
+                return _responseMessages[key];
 
             var notFoundMessage = new HttpResponseMessage(HttpStatusCode.NotFound) {RequestMessage = request};
 
