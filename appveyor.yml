@@ -1,6 +1,6 @@
 version: 1.0.0-build{build}
 install:
-- ps: dnvm install 1.0.0-rc2-16357 -u
+- ps: dnvm install 1.0.0-rc1-update1
 cache:
 - C:\Users\appveyor\.dnx\runtimes
 - C:\Users\appveyor\.dnx\packages
