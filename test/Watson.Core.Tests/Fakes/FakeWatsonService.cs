@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Watson.Core.Tests.Fakes
 {
-    public class FakeService : WatsonService
+    public class FakeWatsonService : WatsonService
     {
-        public FakeService(string username, string password, HttpClient httpClient, WatsonSettings settings)
+        public FakeWatsonService(string username, string password, HttpClient httpClient, WatsonSettings settings)
             : base(username, password, httpClient, settings)
         {
         }

@@ -35,10 +35,9 @@ namespace Watson.Core.Tests.Fakes
             if (_fakeResponses.ContainsKey(key))
                 return _fakeResponses[key];
 
-            return
-                await
-                    Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound) { RequestMessage = request })
-                        .ConfigureAwait(false);
+            var notFoundMessage = new HttpResponseMessage(HttpStatusCode.NotFound) {RequestMessage = request};
+
+            return await Task.FromResult(notFoundMessage).ConfigureAwait(false);
         }
     }
 }

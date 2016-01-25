@@ -98,7 +98,7 @@ namespace Watson.Core
             {
                 //If the error can't be parsed, just return the reason phrase
                 if (!stringResponse.StartsWith("{\"help"))
-                    throw new WatsonException($"{(int)httpResponse.StatusCode} {httpResponse.ReasonPhrase}");
+                    throw new WatsonException($"{(int) httpResponse.StatusCode} {httpResponse.ReasonPhrase}");
 
                 //Parse the error
                 dynamic errorObject = JObject.Parse(stringResponse);
@@ -138,7 +138,7 @@ namespace Watson.Core
             {
                 //If the error can't be parsed, just return the reason phrase
                 if (!stringResponse.StartsWith("{\"help"))
-                    throw new WatsonException($"{(int)httpResponse.StatusCode} {httpResponse.ReasonPhrase}");
+                    throw new WatsonException($"{(int) httpResponse.StatusCode} {httpResponse.ReasonPhrase}");
 
                 //Parse the error
                 dynamic errorObject = JObject.Parse(stringResponse);

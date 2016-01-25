@@ -3,53 +3,62 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
+
+// ReSharper disable ExceptionNotDocumented
 
 namespace Watson.Core.Tests.Fakes
 {
-    [TestClass]
     public class FakeHttpMessageHandlerTests
     {
-        [TestMethod]
-        public async Task HttpClient_GetAsync_ResponseContent_IsNull()
+        public static Dictionary<string, string> PostContent => new Dictionary<string, string>
         {
-            var fakeUrl = "http://example.org/exists";
-            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("hello world") };
+            {"Name", "bob"},
+            {"Address", "Ireland"},
+            {"Phone", "12345"}
+        };
 
-            var httpClient = new HttpClient(new FakeHttpMessageHandler(fakeUrl, fakeResponse));
-            var httpResponse = await httpClient.GetAsync("http://example.org/notfound").ConfigureAwait(false);
+        [Theory]
+        [InlineData("http://example.org/exists", "http://example.org/exists", "Hello World", false)]
+        [InlineData("http://example.org/exists", "http://example.org/notexists", "Hello World", true)]
+        public async Task HttpClient_GetAsync(string requestUrl, string contentUrl, string contentAtUrl,
+            bool contentIsNull)
+        {
+            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent(contentAtUrl)};
 
-            Assert.IsNull(httpResponse.Content);
+            var httpClient = new HttpClient(new FakeHttpMessageHandler(contentUrl, fakeResponse));
+            var httpResponse = await httpClient.GetAsync(requestUrl).ConfigureAwait(false);
+            string stringResponse = null;
+
+            if (httpResponse.Content != null)
+                stringResponse = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            Assert.Equal(string.IsNullOrEmpty(stringResponse), contentIsNull);
+
+            if (!contentIsNull)
+                Assert.Equal(contentAtUrl, stringResponse);
         }
 
-        [TestMethod]
-        public async Task HttpClient_GetAsync_ResponseContentAreEqual()
+        [Theory]
+        [InlineData("http://example.org/exists", "http://example.org/exists", "accepted=true", false)]
+        [InlineData("http://example.org/exists", "http://example.org/notexists", "error", true)]
+        public async Task HttpClient_PostAsync(string requestUrl, string contentUrl, string contentAtUrl,
+            bool contentIsNull)
         {
-            var fakeUrl = "http://example.org/test";
-            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("get response") };
+            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent(contentAtUrl)};
 
-            var httpClient = new HttpClient(new FakeHttpMessageHandler(fakeUrl, fakeResponse));
-            var httpResponse = await httpClient.GetAsync("http://example.org/test").ConfigureAwait(false);
-            var stringResponse = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var httpClient = new HttpClient(new FakeHttpMessageHandler(contentUrl, fakeResponse));
+            var content = new FormUrlEncodedContent(PostContent.ToArray());
+            var httpResponse = await httpClient.PostAsync(requestUrl, content).ConfigureAwait(false);
+            string stringResponse = null;
 
-            Assert.AreEqual("get response", stringResponse);
-        }
+            if (httpResponse.Content != null)
+                stringResponse = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-        [TestMethod]
-        public async Task HttpClient_PostAsync_ResponseContentAreEqual()
-        {
-            var fakeUrl = "http://example.org/test";
-            var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("post response") };
+            Assert.Equal(string.IsNullOrEmpty(stringResponse), contentIsNull);
 
-            var httpClient = new HttpClient(new FakeHttpMessageHandler(fakeUrl, fakeResponse));
-            var parameters = new Dictionary<string, string> { { "Name", "bob" } };
-
-            var content = new FormUrlEncodedContent(parameters.ToArray());
-
-            var httpResponse = await httpClient.PostAsync("http://example.org/test", content).ConfigureAwait(false);
-            var stringResponse = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            Assert.AreEqual("post response", stringResponse);
+            if (!contentIsNull)
+                Assert.Equal(contentAtUrl, stringResponse);
         }
     }
 }
