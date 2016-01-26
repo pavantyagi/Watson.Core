@@ -14,14 +14,12 @@ namespace Watson.Core.Tests.JsonConverterTests
     {
         public static IEnumerable<object[]> ReadJsonData => new[]
         {
-            new object[]
-            {new DateTimeOffset(new DateTime(2015, 8, 9, 15, 30, 35, DateTimeKind.Utc)), "1439134235"}
+            new object[] {new DateTimeOffset(new DateTime(2015, 8, 9, 15, 30, 35, DateTimeKind.Utc)), "1439134235"}
         };
 
         public static IEnumerable<object[]> WriteJsonData => new[]
         {
-            new object[]
-            {"1439134235", new DateTimeOffset(new DateTime(2015, 8, 9, 15, 30, 35, DateTimeKind.Utc))}
+            new object[] {"1439134235", new DateTimeOffset(new DateTime(2015, 8, 9, 15, 30, 35, DateTimeKind.Utc))}
         };
 
         [Theory]

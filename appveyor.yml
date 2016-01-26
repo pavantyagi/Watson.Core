@@ -4,13 +4,14 @@ install:
     dnvm install 1.0.0-rc1-update1
 
     dnvm use 1.0.0-rc1-update1
-cache:- C:\Users\appveyor\.dnx\runtimes
+
+    nuget sources add -Name Local-CI -Source C:\Users\appveyor\.dnx\packages
+cache:
+- C:\Users\appveyor\.dnx\runtimes
 - C:\Users\appveyor\.dnx\packages
 before_build:
 - ps: >-
     dnu restore
-
-    nuget restore
 
     (Get-Content src\Watson.Core\project.json).replace('"version": "1.0.0-*",', '"version": "' + $env:APPVEYOR_BUILD_VERSION + '",') | Set-Content src\Watson.Core\project.json
 build:
