@@ -23,7 +23,7 @@ namespace Watson.Core.Tests.Mocks
             _responseMessages.Add(url, response);
         }
 
-        public void AddresponseMessage(string url, HttpResponseMessage response)
+        public void AddResponseMessage(string url, HttpResponseMessage response)
         {
             _responseMessages.Add(url, response);
         }
