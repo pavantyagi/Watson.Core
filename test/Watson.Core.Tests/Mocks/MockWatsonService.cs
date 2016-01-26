@@ -17,9 +17,9 @@ namespace Watson.Core.Tests.Mocks
             return await base.SendRequestAsync<T>(message).ConfigureAwait(false);
         }
 
-        public new async Task<string> SendRequestWithRawResponseAsync(HttpRequestMessage message)
+        public new async Task<string> SendRequestAsync(HttpRequestMessage message)
         {
-            return await base.SendRequestWithRawResponseAsync(message).ConfigureAwait(false);
+            return await base.SendRequestAsync(message).ConfigureAwait(false);
         }
     }
 }

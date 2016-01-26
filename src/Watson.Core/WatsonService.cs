@@ -81,30 +81,7 @@ namespace Watson.Core
         /// <returns></returns>
         protected virtual async Task<T> SendRequestAsync<T>(HttpRequestMessage message)
         {
-            if (message == null)
-                throw new ArgumentNullException(nameof(message));
-
-            var httpResponse = await HttpClient.SendAsync(message).ConfigureAwait(false);
-
-            string stringResponse = null;
-
-            if (httpResponse.Content != null)
-                stringResponse = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            stringResponse = stringResponse ?? string.Empty;
-
-            //If not a 200 response
-            if (!httpResponse.IsSuccessStatusCode)
-            {
-                //If the error can't be parsed, just return the reason phrase
-                if (!stringResponse.StartsWith("{\"help"))
-                    throw new WatsonException($"{(int) httpResponse.StatusCode} {httpResponse.ReasonPhrase}");
-
-                //Parse the error
-                dynamic errorObject = JObject.Parse(stringResponse);
-                string error = errorObject.error.ToString();
-                throw new WatsonException(error);
-            }
+            var stringResponse = await SendRequestAsync(message).ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(stringResponse))
                 return default(T);
@@ -113,13 +90,13 @@ namespace Watson.Core
         }
 
         /// <summary>
-        ///     Send requests to the service and return a raw string.
+        ///     Send requests to the service and return the raw string response.
         /// </summary>
         /// <param name="message">The HttpRequestMessage that should be sent.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="WatsonException"></exception>
         /// <returns></returns>
-        protected virtual async Task<string> SendRequestWithRawResponseAsync(HttpRequestMessage message)
+        protected virtual async Task<string> SendRequestAsync(HttpRequestMessage message)
         {
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
