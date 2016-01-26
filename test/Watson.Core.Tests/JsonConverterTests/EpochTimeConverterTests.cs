@@ -8,7 +8,7 @@ using Xunit;
 
 // ReSharper disable ExceptionNotDocumented
 
-namespace Watson.Core.Tests.JsonConverters
+namespace Watson.Core.Tests.JsonConverterTests
 {
     public class EpochTimeConverterTests
     {
