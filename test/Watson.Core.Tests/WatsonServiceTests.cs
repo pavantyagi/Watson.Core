@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -13,38 +14,22 @@ namespace Watson.Core.Tests
 {
     public class WatsonServiceTests
     {
-        [Fact]
-        public void Username_SetNullByConstructor_ThrowArgumentNullException()
+        public static IEnumerable<object[]> ConstructorData => new[]
+        {
+            new object[] {null, null, null, null},
+            new object[] {null, "password", new HttpClient(), new WatsonSettings()},
+            new object[] {"username", null, new HttpClient(), new WatsonSettings()},
+            new object[] {"username", "password", null, new WatsonSettings()},
+            new object[] {"username", "password", new HttpClient(), null}
+        };
+
+        [Theory, MemberData("ConstructorData")]
+        public void Constructor_WithNullParameters_ThrowsArgumentNullException(string username, string password,
+            HttpClient httpClient, WatsonSettings settings)
         {
             var exception =
-                Record.Exception(() => new MockWatsonService(null, "password", new HttpClient(), new WatsonSettings()));
+                Record.Exception(() => new MockWatsonService(username, password, httpClient, settings));
 
-            Assert.NotNull(exception);
-            Assert.IsType<ArgumentNullException>(exception);
-        }
-
-        [Fact]
-        public void Password_SetNullByConstructor_ThrowArgumentNullException()
-        {
-            var exception =
-                Record.Exception(() => new MockWatsonService("username", null, new HttpClient(), new WatsonSettings()));
-            Assert.NotNull(exception);
-            Assert.IsType<ArgumentNullException>(exception);
-        }
-
-        [Fact]
-        public void HttpClient_SetNullByConstructor_ThrowArgumentNullException()
-        {
-            var exception =
-                Record.Exception(() => new MockWatsonService("username", "password", null, new WatsonSettings()));
-            Assert.NotNull(exception);
-            Assert.IsType<ArgumentNullException>(exception);
-        }
-
-        [Fact]
-        public void WatsonSettings_SetNullByConstructor_ThrowArgumentNullException()
-        {
-            var exception = Record.Exception(() => new MockWatsonService("username", "password", new HttpClient(), null));
             Assert.NotNull(exception);
             Assert.IsType<ArgumentNullException>(exception);
         }
@@ -145,7 +130,7 @@ namespace Watson.Core.Tests
         }
 
         [Fact]
-        public async Task SendRequestAsync_ThrowWatsonException()
+        public async Task SendRequestAsync_WithInvalidUrl_ThrowWatsonException()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://example.org/request");
             var responseMessage = new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("true")};
