@@ -108,14 +108,14 @@ namespace Watson.Core
             if (httpResponse.Content != null)
                 stringResponse = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            stringResponse = stringResponse ?? string.Empty;
+            stringResponse = (stringResponse ?? string.Empty).Trim();
 
             //If not a 200 response parse the error response
             if (!httpResponse.IsSuccessStatusCode)
             {
                 //Parse the error response if it's a valid json string
                 if (stringResponse.StartsWith("{") && stringResponse.EndsWith("}") &&
-                    stringResponse.Contains("\"error\":"))
+                    stringResponse.Contains("error"))
                 {
                     dynamic errorObject = JObject.Parse(stringResponse);
                     string error = errorObject.error;
