@@ -110,17 +110,20 @@ namespace Watson.Core
 
             stringResponse = stringResponse ?? string.Empty;
 
-            //If not a 200 response
+            //If not a 200 response parse the error response
             if (!httpResponse.IsSuccessStatusCode)
             {
-                //If the error can't be parsed, just return the reason phrase
-                if (!stringResponse.StartsWith("{\"help"))
-                    throw new WatsonException($"{(int) httpResponse.StatusCode} {httpResponse.ReasonPhrase}");
+                //Parse the error response if it's a valid json string
+                if (stringResponse.StartsWith("{") && stringResponse.EndsWith("}") &&
+                    stringResponse.Contains("\"error\":"))
+                {
+                    dynamic errorObject = JObject.Parse(stringResponse);
+                    string error = errorObject.error;
+                    throw new WatsonException(error);
+                }
 
-                //Parse the error
-                dynamic errorObject = JObject.Parse(stringResponse);
-                string error = errorObject.error.ToString();
-                throw new WatsonException(error);
+                //If the error can't be parsed, just return the reason phrase
+                throw new WatsonException($"{(int) httpResponse.StatusCode} {httpResponse.ReasonPhrase}");
             }
 
             return stringResponse;

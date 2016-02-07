@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -12,28 +11,8 @@ using Xunit;
 
 namespace Watson.Core.Tests
 {
-    public class WatsonServiceTests
+    public partial class WatsonServiceTests
     {
-        public static IEnumerable<object[]> ConstructorData => new[]
-        {
-            new object[] {null, null, null, null},
-            new object[] {null, "password", new HttpClient(), new WatsonSettings()},
-            new object[] {"username", null, new HttpClient(), new WatsonSettings()},
-            new object[] {"username", "password", null, new WatsonSettings()},
-            new object[] {"username", "password", new HttpClient(), null}
-        };
-
-        [Theory, MemberData("ConstructorData")]
-        public void Constructor_WithNullParameters_ThrowsArgumentNullException(string username, string password,
-            HttpClient httpClient, WatsonSettings settings)
-        {
-            var exception =
-                Record.Exception(() => new MockWatsonService(username, password, httpClient, settings));
-
-            Assert.NotNull(exception);
-            Assert.IsType<ArgumentNullException>(exception);
-        }
-
         [Fact]
         public void HttpClient_SetByConstructor_NotNull()
         {
@@ -99,85 +78,22 @@ namespace Watson.Core.Tests
             Assert.Equal(expectedAuthorization.Parameter, actualAuthorization.Parameter);
         }
 
-        [Fact]
-        public async Task SendRequestAsyncBool_WithNullMessage_ThrowsArgumentNullException()
-        {
-            var service = new MockWatsonService("ausername", "apassword", new HttpClient(), new WatsonSettings());
-
-            var exception =
-                await
-                    Record.ExceptionAsync(async () => await service.SendRequestAsync<bool>(null).ConfigureAwait(false))
-                        .ConfigureAwait(false);
-            Assert.NotNull(exception);
-            Assert.IsType<ArgumentNullException>(exception);
-        }
-
         [Theory]
-        [InlineData("http://example.org/url", "true")]
-        public async Task SendRequestAsyncBool(string requestUrl, string responseContent)
+        [InlineData(22.05)]
+        [InlineData(99)]
+        public async Task SendRequestAsync<T>(T responseContent)
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://example.org/url");
             var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(responseContent)
+                Content = new StringContent(responseContent.ToString())
             };
-            var httpClient = new HttpClient(new MockHttpMessageHandler(requestUrl, responseMessage));
+            var httpClient = new HttpClient(new MockHttpMessageHandler("http://example.org/url", responseMessage));
             var service = new MockWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
 
-            var response = await service.SendRequestAsync<bool>(requestMessage).ConfigureAwait(false);
+            var response = await service.SendRequestAsync<T>(requestMessage).ConfigureAwait(false);
 
-            Assert.Equal(response, Convert.ToBoolean(responseContent));
-        }
-
-        [Fact]
-        public async Task SendRequestAsync_WithInvalidUrl_ThrowWatsonException()
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://example.org/request");
-            var responseMessage = new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("true")};
-            var httpClient = new HttpClient(new MockHttpMessageHandler("http://example.org/404", responseMessage));
-            var service = new MockWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
-
-            var exception =
-                await
-                    Record.ExceptionAsync(
-                        async () => await service.SendRequestAsync<bool>(requestMessage).ConfigureAwait(false))
-                        .ConfigureAwait(false);
-            Assert.NotNull(exception);
-            Assert.IsType<WatsonException>(exception);
-        }
-
-        [Fact]
-        public async Task SendRequestAsyncBool_With401ErrorMessage_ThrowWatsonException()
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://example.org/request");
-            var responseMessage = new HttpResponseMessage(HttpStatusCode.Unauthorized)
-            {
-                Content = new StringContent(MockErrors.Error401)
-            };
-            var httpClient = new HttpClient(new MockHttpMessageHandler("http://example.org/request", responseMessage));
-            var service = new MockWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
-
-            var exception =
-                await
-                    Record.ExceptionAsync(
-                        async () => await service.SendRequestAsync<bool>(requestMessage).ConfigureAwait(false))
-                        .ConfigureAwait(false);
-            Assert.NotNull(exception);
-            Assert.IsType<WatsonException>(exception);
-        }
-
-        [Fact]
-        public async Task SendRequestAsync_WithNullMessage_ThrowsArgumentNullException()
-        {
-            var service = new MockWatsonService("ausername", "apassword", new HttpClient(), new WatsonSettings());
-
-            var exception =
-                await
-                    Record.ExceptionAsync(
-                        async () => await service.SendRequestAsync(null).ConfigureAwait(false))
-                        .ConfigureAwait(false);
-            Assert.NotNull(exception);
-            Assert.IsType<ArgumentNullException>(exception);
+            Assert.Equal(response, responseContent);
         }
 
         [Theory]
@@ -195,26 +111,6 @@ namespace Watson.Core.Tests
             var stringResponse = await service.SendRequestAsync(requestMessage).ConfigureAwait(false);
 
             Assert.Equal(stringResponse, responseContent);
-        }
-
-        [Fact]
-        public async Task SendRequestAsync_With401ErrorMessage_ThrowWatsonException()
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "http://example.org/request");
-            var responseMessage = new HttpResponseMessage(HttpStatusCode.Unauthorized)
-            {
-                Content = new StringContent(MockErrors.Error401)
-            };
-            var httpClient = new HttpClient(new MockHttpMessageHandler("http://example.org/request", responseMessage));
-            var service = new MockWatsonService("ausername", "apassword", httpClient, new WatsonSettings());
-
-            var exception =
-                await
-                    Record.ExceptionAsync(
-                        async () => await service.SendRequestAsync(requestMessage).ConfigureAwait(false))
-                        .ConfigureAwait(false);
-            Assert.NotNull(exception);
-            Assert.IsType<WatsonException>(exception);
         }
     }
 }
