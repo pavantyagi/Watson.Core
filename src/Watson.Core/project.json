@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
   "description": "Watson.Core contains common abstractions and converters used by other Watson packages.",
   "authors": [ "Damien Dennehy" ],
